@@ -789,10 +789,10 @@ section {
 section #title {
   border: 0;
   outline: none;
-  margin: 0 0 50px 40px;
+  margin: 0 0 50px 36px;
 
   float:left;
-  width:440px;
+  width:444px;
 }
 section #title h1 {
   font-family: 'OpenSansLight', "Helvetica Neue", Helvetica, Arial, sans-serif;
