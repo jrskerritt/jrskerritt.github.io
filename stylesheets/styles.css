@@ -789,7 +789,7 @@ section {
 section #title {
   border: 0;
   outline: none;
-  margin: 0 0 50px 36px;
+  margin: 0 0 50px 0px;
 
   float:left;
   width:444px;
@@ -819,6 +819,10 @@ section .credits.left {
 section .credits.right {
   float: right;
 }
+.main-image {
+  float:left;
+  margin-right:36px;
+}
 
 @media print, screen and (max-width: 720px) {
   .credits {
@@ -847,5 +851,13 @@ section .credits.right {
 
   nav {
     display: none;
+  }
+
+  .main-image {
+    display:none;
+  }
+
+  section #title {
+    width:auto;
   }
 }
