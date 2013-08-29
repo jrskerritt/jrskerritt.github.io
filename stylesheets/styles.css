@@ -792,7 +792,7 @@ section #title {
   margin: 0 0 50px 0px;
 
   float:left;
-  width:444px;
+  width:415px;
 }
 section #title h1 {
   font-family: 'OpenSansLight', "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -821,7 +821,7 @@ section .credits.right {
 }
 .main-image {
   float:left;
-  margin-right:36px;
+  margin-right:37px;
 }
 
 @media print, screen and (max-width: 720px) {
