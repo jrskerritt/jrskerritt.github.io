@@ -85,7 +85,7 @@ io.sockets.on(&#39;connection&#39;, function (socket) {
     });
 });</code></pre>
 <p>The server listens on port <code>9132</code> for incoming post requests. Every time one is recevied, the data is stored or updated in an object called <code>trafficData</code> using the site name as the key and the current number of users on the site as the value. </p>
-<p>On the client, we have to request for this data periodically and then update then numbers on the page.</p>
+<p>On the client, we have to request for this data periodically and then update the numbers on the page.</p>
 <pre><code class="lang-javascript">var socket = io.connect(&#39;/&#39;);
 
 $(function() {
