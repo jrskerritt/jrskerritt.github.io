@@ -12,26 +12,50 @@ body {
   }
 }
 
-.container.main {
-  min-height: 1000px;
-}
-
 .header {
-  padding-top: 20px;
-  padding-bottom: 20px;
+  padding-top:25px;
+  padding-bottom:36px;
 }
 
 .main .header h1 {
-  font-size: 4em;
+  font-size:4em;
 }
+
+.blog-post-header {
+  padding-top:25px;
+  padding-bottom:20px;
+}
+
+.blog-post-header h1 {
+  font-size:3em;
+}
+
+.blog-post h2 {
+  margin-top:0;
+  font-size:2em; 
+}
+
+.blog-post h3 {
+  font-size:1.5em; 
+}
+
+.blog-post h4 {
+  font-size:1.2em;
+  margin-bottom:20px;
+}
+
+.blog-post {
+  margin-bottom: 100px;
+}
+
 
 /* Sidebar modules for boxing content */
 .sidebar-module {
-  padding: 15px;
+  padding: 25px;
   margin: 0 -15px 15px;
 }
 .sidebar-module-inset {
-  padding: 15px;
+  padding: 25px;
   background-color: #f5f5f5;
   border-radius: 4px;
 }
