@@ -52,36 +52,18 @@
                     
 
 <div class="blog-post">
-<h2>Creating a basic express.js and socket.io app</h2>
-<h4>April 6, 2014</h4>
+<h2><a href="posts/2014-04-09-using-git-with-svn.html">Using Git with SVN</a></h2>
+<h4>April 9, 2014</h4>
+<p>Are you like me and you work on a team that uses SVN, but you would really like to use Git locally? It turns out there is excellent support for doing so using <code>git svn</code>, but it takes a bit of effort to get things set up. After working with <code>git svn</code> for about a month or two now, I decided to write up a guide with my experiences for others looking to continue using Git even if their team doesn&#39;t.</p>
+<p><a href="posts/2014-04-09-using-git-with-svn.html">Read more &gt;&gt;</a></p>
+</div>
+
+
+<div class="blog-post">
+<h2><a href="posts/2014-04-05-creating-a-basic-express-js-and-socket-io-app.html">Creating a basic express.js and socket.io app</a></h2>
+<h4>April 5, 2014</h4>
 <p>The other day at the office, a conversation began about the hassle of needing a tab of realtime Google Analytics open for each of our websites. We could only Chromecast one or two tabs at a time onto our office TV. Wouldn&#39;t it be nice to somehow watch the traffic for each website, along with a running total in realtime, all on one nicely castable tab?</p>
 <p>The keyword here was <strong>realtime</strong>. It gave me the idea to try out <a href="http://socket.io/">socket.io</a> to create a simple application that these tabs of Analytics could post their current realtime numbers to, and the app could emit the latest numbers out to a web page for viewing. <a href="http://expressjs.com/">Express.js</a> would be perfect for this to quickly get an effective application going.</p>
-<p>The code turned out to be very simple:</p>
-<pre><code class="lang-javascript">var express = require(&#39;express&#39;)
-,   app = express()
-,   server = app.listen(9132)
-,   io = require(&#39;socket.io&#39;).listen(server);
-
-app.use(express.json());
-app.use(express.urlencoded());
-app.use(express.static(__dirname + &#39;/public&#39;));
-
-
-var trafficData = {};
-
-// parameters:
-// site - the string of the site name
-// n - the count
-app.post(&#39;/&#39;, function (req, res) {
-    trafficData[req.body.site] = req.body.n;
-});
-
-io.sockets.on(&#39;connection&#39;, function (socket) {
-    socket.on(&#39;traffic-req&#39;, function () {
-        socket.emit(&#39;traffic-res&#39;, trafficData);
-    });
-});</code></pre>
-
 <p><a href="posts/2014-04-05-creating-a-basic-express-js-and-socket-io-app.html">Read more &gt;&gt;</a></p>
 </div>
 

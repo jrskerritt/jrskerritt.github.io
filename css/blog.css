@@ -18,7 +18,7 @@ p, pre {
 
 .header {
   padding-top:25px;
-  padding-bottom:36px;
+  padding-bottom:30px;
 }
 
 .main .header h1 {
@@ -48,8 +48,25 @@ p, pre {
   margin-bottom:20px;
 }
 
+.blog-post.standalone h2 {
+  font-size:1.8em;
+  margin-top:50px;
+}
+
+.blog-post.standalone h3 {
+  font-size:1.5em;
+}
+
+.blog-post.standalone h4 {
+  font-size:1.2em;
+}
+
 .blog-post {
-  margin-bottom: 100px;
+  margin-bottom: 65px;
+}
+
+.blog-post code {
+  font-size:12px;
 }
 
 
@@ -83,6 +100,7 @@ p, pre {
   padding: 40px 0;
   color: #999;
   text-align: center;
+  font-size: 1.3em;
   background-color: #f9f9f9;
   border-top: 1px solid #e5e5e5;
 }
