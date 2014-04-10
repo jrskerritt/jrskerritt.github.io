@@ -95,7 +95,7 @@ git svn fetch {svn branch name} -r{revision}</code></pre>
 <p>These commands will automatically detect which svn-remote you currently have checked out. If necessary you can <code>git stash</code> before rebasing and then <code>git stash pop</code>.</p>
 <h2>Create a .gitignore file</h2>
 <p>There are two ways to go about creating a <code>.gitignore</code> file. The first is to run this command in the root of your repository:</p>
-<pre><code class="lang-bash">git-svn show-ignore &gt; .gitignore</code></pre>
+<pre><code class="lang-bash">git svn show-ignore &gt; .gitignore</code></pre>
 <p>The second is to simply copy one of the <code>.gitignore</code> files from this repository: <a href="https://github.com/github/gitignore">https://github.com/github/gitignore</a>. These will cover the majority of files you will want to ignore depending on your project type.</p>
 
 
