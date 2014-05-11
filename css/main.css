@@ -175,15 +175,21 @@ footer {
   background: url("../images/webicon-twitter.png"); 
 }
 
-@media (max-width: 45em) {
+@media (max-width: 44em) {
   .container {
     margin: 0;
-    padding: 2.5em;
+    padding: 1em;
     width: auto;
   }
 
   article {
     width: auto;
+  }
+}
+
+@media (max-width: 30em) {
+  .avatar {
+    width: 4em;
   }
 }
 
