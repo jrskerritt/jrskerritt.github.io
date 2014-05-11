@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Creating a basic express.js and socket.io app - Jim Skerritt</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="../favicon.ico" type="image/x-icon">
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,300,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/solarized-dark.css">
+  </head>
+  <body>
+    <div class="container">
+      <article>
+        <h1>Creating a basic express.js and socket.io app</h1>
+        <time>April 5, 2014</time>
+        <p>The other day at the office, a conversation began about the hassle of needing a tab of realtime Google Analytics open for each of our websites. We could only Chromecast one or two tabs at a time onto our office TV. Wouldn&#39;t it be nice to somehow watch the traffic for each website, along with a running total in realtime, all on one nicely castable tab?</p>
+        <p>The keyword here was <strong>realtime</strong>. It gave me the idea to try out <a href="http://socket.io/">socket.io</a> to create a simple application that these tabs of Analytics could post their current realtime numbers to, and the app could emit the latest numbers out to a web page for viewing. <a href="http://expressjs.com/">Express.js</a> would be perfect for this to quickly get an effective application going.</p>
+        <p>The code turned out to be very simple:</p>
+        <pre><code class="lang-javascript"><span class="hljs-keyword">var</span> express = <span class="hljs-keyword">require</span>(<span class="hljs-string">'express'</span>)
+,   app = express()
+,   server = app.listen(<span class="hljs-number">9132</span>)
+,   io = <span class="hljs-keyword">require</span>(<span class="hljs-string">'socket.io'</span>).listen(server);
+
+app.<span class="hljs-keyword">use</span>(express.json());
+app.<span class="hljs-keyword">use</span>(express.urlencoded());
+app.<span class="hljs-keyword">use</span>(express.<span class="hljs-keyword">static</span>(__dirname + <span class="hljs-string">'/public'</span>));
+
+
+<span class="hljs-keyword">var</span> trafficData = {};
+
+<span class="hljs-comment">// parameters:</span>
+<span class="hljs-comment">// site - the string of the site name</span>
+<span class="hljs-comment">// n - the count</span>
+app.post(<span class="hljs-string">'/'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(req, res)</span> {</span>
+    trafficData[req.body.site] = req.body.n;
+});
+
+io.sockets.on(<span class="hljs-string">'connection'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(socket)</span> {</span>
+    socket.on(<span class="hljs-string">'traffic-req'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
+        socket.emit(<span class="hljs-string">'traffic-res'</span>, trafficData);
+    });
+});
+</code></pre>
+        <p>The server listens on port <code>9132</code> for incoming post requests. Every time one is received, the data is stored or updated in an object called <code>trafficData</code> using the site name as the key and the current number of users on the site as the value. </p>
+        <p>On the client, we have to request for this data periodically and then update the numbers on the page.</p>
+        <pre><code class="lang-javascript"><span class="hljs-keyword">var</span> socket = io.connect(<span class="hljs-string">'/'</span>);
+
+$(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+    socket.on(<span class="hljs-string">'traffic-res'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(res)</span> {</span>
+        refresh(res);
+    });
+
+    setInterval(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+        socket.emit(<span class="hljs-string">'traffic-req'</span>);
+    }, <span class="hljs-number">2500</span>);
+});
+</code></pre>
+        <p>Once we set up a connection to a socket, our script will emit requests every 2.5 seconds. Upon receiving a response, the <code>refresh</code> function iterates over each key-value pair and updates the DOM with new traffic numbers.</p>
+        <p>The last step is to hook up our open realtime Analytics tabs to post the data that we want to our Express app.</p>
+        <pre><code class="lang-javascript">javascript: (<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span><span class="hljs-keyword">if</span> (!($ = window.jQuery)) {script = document.createElement( <span class="hljs-string">'script'</span> ); script.src = <span class="hljs-string">'//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js'</span>; script.onload=bmf; document.body.appendChild(script); } <span class="hljs-keyword">else</span> { bmf(); } <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">bmf</span><span class="hljs-params">()</span> {</span> <span class="hljs-keyword">var</span> xhr; <span class="hljs-keyword">var</span> site = $(<span class="hljs-string">'[class*="accounts-summary"]'</span>).find(<span class="hljs-string">'li:last-child'</span>).find(<span class="hljs-string">'span'</span>).text().split(<span class="hljs-string">' '</span>)[<span class="hljs-number">0</span>]; <span class="hljs-keyword">var</span> fn = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span> <span class="hljs-keyword">if</span>(xhr &amp;&amp; xhr.readystate != <span class="hljs-number">4</span>){ xhr.abort(); } <span class="hljs-keyword">var</span> count = $(<span class="hljs-string">'#ID-overviewCounterValue'</span>).text(); xhr = $.ajax({ url: <span class="hljs-string">'http://localhost:9132'</span>, type: <span class="hljs-string">'POST'</span>, data: {site:site, n:count }}); }; <span class="hljs-keyword">var</span> interval = setInterval(fn, <span class="hljs-number">2000</span>); }}());
+</code></pre>
+        <p>This script is designed to be added as a bookmark, then every time you open an Analytics page that you want to track, you just open the bookmark, and the traffic numbers will start getting posted to the Express server every 2 seconds.</p>
+        <p>And that&#39;s it! Once all the pieces are in place, realtime traffic numbers will start appearing on your Express page. Very quick and easy, and now we only ever need to have one instance of Analytics open for each website. Our Express server and Google Analytics tabs run on the same Linux server for our needs, allowing anyone in the office to browse to that machine&#39;s IP on port <code>9132</code> and watch the numbers without having to open all those Analytics tabs for themselves.</p>
+        <p>Here&#39;s a screenshot of what the current version of the app looks like after adding a realtime SVG graph and some styling:</p>
+        <div class="image"><img src="../images/2014-04-06-1.png" /></div>
+        <p>You can check out the entire source code for the application on GitHub here: <a href="https://github.com/jrskerritt/pluralytics">https://github.com/jrskerritt/pluralytics</a></p>
+      </article>
+      <footer>
+        <div class="return"><a href="../">jimskerritt.com</a></div>
+        <div>&copy;2014&nbsp; Jim Skerritt</div>
+      </footer>
+    </div>
+
+    <script type="text/javascript">
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-49704487-1', 'jimskerritt.com');
+      ga('send', 'pageview');
+    </script>
+  </body>
+</html>

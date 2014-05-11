@@ -1,0 +1,196 @@
+/* Palette from http://www.colourlovers.com/palette/2715769/Moment_Of_Zen* */
+
+body {
+  font-family: "Open Sans", "Helvetica Neue", sans-serif;
+  font-size: 1em;
+  color: #444;
+  background-color: #f9f9f9;
+}
+
+p {
+  margin: 1.2em 0;
+}
+
+a {
+  color: #61a0ab;
+}
+
+a:hover {
+  color: #91BDB9;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin: 0 0 0.2em 0;
+  font-weight: normal;
+}
+
+h1 {
+  font-size: 2.4em;
+}
+
+h2 {
+  font-size: 2em;
+}
+
+h3 {
+  font-size: 1.7em;
+}
+
+h4 {
+  font-size: 1.5em;
+}
+
+/* Responsive images */
+.image img{
+    max-width: 100% !important;
+    height: auto;
+    display: block;
+}
+
+pre {
+  margin: 1.2em 0;
+  word-break: break-all;
+  word-wrap: break-word;
+}
+
+/* Inline code */
+p code {
+  background: #eaeef3;
+  color: #00193a;
+  font-family: Menlo, Consolas, monospace;
+  font-size: .8em;
+  padding: .2em;
+}
+
+.container {
+  margin: 0 auto 4em;
+  padding-top: 3em;
+  width: 40em;
+}
+
+header .title {
+  margin: 0 0 1.3em 0;
+}
+
+header .name {
+  font-size: 2.9em;
+}
+
+header .subtitle, time {
+  font-size: 1.1em;
+  color: #999;
+}
+
+header .links {
+  padding: .5em 0;
+}
+
+header .links ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  text-align: center;
+}
+
+header .links ul li {
+  display: inline-block;
+  margin: 0;
+  padding-right: 0.4em;
+}
+
+section.posts {
+  margin-top: 2em;
+}
+
+article {
+  margin-bottom: 2.5em;
+}
+
+article .title {
+  font-size: 1.5em;
+  margin: 0 0 0.2em 0;
+}
+
+article .title a {
+  text-decoration: none;
+}
+
+footer {
+  font-size: 0.8em;
+  text-align: center;
+  color: #adadad;
+}
+
+.avatar {
+  float: left;
+  padding: 0.2em 1.7em 0.1em 0;
+}
+
+.avatar img {
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  border-radius: 50%;
+  -webkit-box-shadow: 0 0 0 3px #fff, 0 0 0 4px #999, 0 2px 5px 4px rgba(0,0,0,.2);
+  -moz-box-shadow: 0 0 0 3px #fff, 0 0 0 4px #999, 0 2px 5px 4px rgba(0,0,0,.2);
+  box-shadow: 0 0 0 3px #fff, 0 0 0 4px #999, 0 2px 5px 4px rgba(0,0,0,.2);
+}
+
+/* Webicons by Adam Fairhead at Fairhead Creative http://fairheadcreative.com */
+.webicon {
+  display: inline-block;
+  background-size: 100%;
+  width: 30px;
+  height: 30px;
+  text-indent: -999em;
+  text-align: left;
+  -moz-box-shadow: 0 1px 0 rgba(0, 0, 0, 0.5);
+  -webkit-box-shadow: 0 1px 0 rgba(0, 0, 0, 0.5);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.5);
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+  margin-bottom: 5px;
+}
+
+.webicon:hover {
+  margin: -1px 0 1px;
+  -moz-box-shadow: 0 2px 0 rgba(0, 0, 0, 0.25);
+  -webkit-box-shadow: 0 2px 0 rgba(0, 0, 0, 0.25);
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.25); 
+}
+
+.webicon.github {
+  background: url("../images/webicon-github.png"); 
+}
+
+.webicon.linkedin {
+  background: url("../images/webicon-linkedin.png"); 
+}
+
+.webicon.stackoverflow {
+  background: url("../images/webicon-stackoverflow.png"); 
+}
+
+.webicon.twitter {
+  background: url("../images/webicon-twitter.png"); 
+}
+
+@media (max-width: 45em) {
+  .container {
+    margin: 0;
+    padding: 2.5em;
+    width: auto;
+  }
+
+  article {
+    width: auto;
+  }
+}
+
+@media print {
+  .container {
+    margin: 0;
+    padding: 0;
+    width: auto;
+  }
+}
