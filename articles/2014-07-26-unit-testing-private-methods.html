@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>How do you unit test private methods? - Jim Skerritt</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="../favicon.ico" type="image/x-icon">
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,300,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/solarized-dark.css">
+  </head>
+  <body>
+    <div class="container">
+      <article>
+        <h1>How do you unit test private methods?</h1>
+        <time>July 26, 2014</time>
+        <p>After pushing for unit testing at Niche for over a year and a half, there&#39;s finally been some changes happening on our development team in the last few weeks.  We&#39;ve made it mandatory to include proper test coverage with each completed task.  For now, my priority is teaching the team what the word &quot;proper&quot; entails: the <em>what</em>, <em>how</em>, and <em>how many</em> of unit testing.  I&#39;ve been doing this in the form of lunch-and-learns with the team and one-on-ones with some of our newer developers.  By far the most disagreement has centered around the question, &quot;how do I unit test this private method?&quot;  To which I always reply, &quot;you don&#39;t.&quot;</p>
+<p>The subject of testing private methods has always been a <a href="http://stackoverflow.com/questions/105007/should-i-test-private-methods-or-only-public-ones">heated</a> <a href="http://programmers.stackexchange.com/questions/100959/how-do-you-unit-test-private-methods">debate</a> among developers, and the discussion with my coworkers that followed was no different.  Now, there are <a href="http://michaelfeathers.typepad.com/michael_feathers_blog/2007/09/the-deep-synerg.html">plenty</a> of <a href="http://lassekoskela.com/thoughts/24/test-everything-but-not-private-methods/">other</a> <a href="http://lostechies.com/chadmyers/2008/11/21/do-not-test-private-methods/">articles</a> out there written by folks who are more experienced on the topic than I am, so I won&#39;t go into too much detail here.  Instead, I&#39;ve attempted to put together an example (in C#).</p>
+<pre><code class="csharp"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> BiasedJukebox
+{
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">readonly</span> SoundOutput _output;
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">readonly</span> SongLibrary _library;
+    <span class="hljs-keyword">private</span> Queue&lt;Song&gt; _queue;
+
+    <span class="hljs-keyword">public</span> <span class="hljs-title">BiasedJukebox</span>(SoundOutput output, SongLibrary library)
+    {
+        _output = output;
+        _library = library;
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Enqueue</span>(Song song)
+    {
+        <span class="hljs-keyword">if</span> (!_library.Contains(song))
+            <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Exception(<span class="hljs-string">"The jukebox doesn't know that song."</span>);
+        _queue.Enqueue(song);
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">PlayNext</span>()
+    {
+        <span class="hljs-keyword">var</span> nextSong = AuditSong(_queue.Dequeue());
+        PlaySong(nextSong);
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">PlayWhatever</span>()
+    {
+        <span class="hljs-keyword">var</span> nextSong = AuditSong(_library.Whatever());
+        PlaySong(nextSong);
+    }
+
+    <span class="hljs-keyword">private</span> Song <span class="hljs-title">AuditSong</span>(Song song)
+    {
+        <span class="hljs-keyword">var</span> songToPlay = song;
+
+        <span class="hljs-keyword">if</span> (songToPlay.Artist.Contains(<span class="hljs-string">"Ke$ha"</span>))
+            songToPlay = _library.Random(Genre.SwedishDeathMetal);
+        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (songToPlay.Artist.Contains(<span class="hljs-string">"Fall Out Boy"</span>))
+            songToPlay = _library.Random(Genre.NinetiesBritPop);
+        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (songToPlay.Artist.Contains(<span class="hljs-string">"Maroon 5"</span>))
+            songToPlay = _library.Random(Genre.Reggae);
+        <span class="hljs-comment">// plus a number of other conditions that might be necessary</span>
+
+        <span class="hljs-keyword">return</span> songToPlay;
+    }
+
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title">PlaySong</span>(Song song)
+    {
+        _output.Play(song);
+        song.IncrementPlayCount();
+    }
+}
+</code></pre>
+<p>This is a pretty trivial example, but the patterns are the same regardless.  We have a <code>BiasedJukebox</code> that selectively plays songs from a queue by sending their data to an output.  As you can see, it&#39;s very picky and it knows what it doesn&#39;t like.  The jukebox will arbitrarily make decisions about which songs it doesn&#39;t want to play, replacing those songs with ones from genres that it does like.  It has a few dependencies that it needs in order to work, one of which is a <code>SongLibrary</code>.  Unfortunately, the library has a lot of songs that the jukebox doesn&#39;t like, so the logic has to work around that limitation.</p>
+<p>So, given all of this, how do we test <code>AuditSong</code>?</p>
+<p>We have no way of calling <code>AuditSong</code> directly, so the obvious way we can test it is by calling the methods of <code>BiasedJukebox</code>&lsquo;s public API and asserting that the logic of <code>AuditSong</code> worked by extension.  This is great because we&#39;re calling the methods of <code>BiasedJukebox</code> exactly how its users will, but consider that we have multiple public methods that are calling <code>AuditSong</code>: <code>PlayNext</code> and <code>PlayWhatever</code>.  We can write tests against one of those public methods that will test the logic inside of <code>AuditSong</code>, but in order to ensure that the other public method also follows that logic, we would need to duplicate each of those tests, calling the other method instead.  This is not so great.</p>
+<p>Since we can&#39;t call <code>AuditSong</code> directly, the solution is to use the <em>extract class</em> refactoring.  Our code is trying to tell us that we have a class that is doing more than one thing; <code>BiasedJukebox</code> is both managing the queue and replacing song requests based on a set of complicated rules.  The replacement logic would be easier to test if it were in its own class as an exposed public method.  Here&#39;s what it would look like after the refactoring.</p>
+<pre><code class="csharp"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> BiasedJukebox
+{
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">readonly</span> SoundOutput _output;
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">readonly</span> SongLibrary _library;
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">readonly</span> SongAuditor _auditor;
+    <span class="hljs-keyword">private</span> Queue&lt;Song&gt; _queue;
+
+    <span class="hljs-keyword">public</span> <span class="hljs-title">BiasedJukebox</span>(SoundOutput output, SongLibrary library, SongAuditor auditor)
+    {
+        _output = output;
+        _library = library;
+        _auditor = auditor;
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Enqueue</span>(Song song)
+    {
+        <span class="hljs-keyword">if</span> (!_library.Contains(song))
+            <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Exception(<span class="hljs-string">"The jukebox doesn't know that song."</span>);
+        _queue.Enqueue(song);
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">PlayNext</span>()
+    {
+        <span class="hljs-keyword">var</span> nextSong = _auditor.Audit(_queue.Dequeue());
+        PlaySong(nextSong);
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">PlayWhatever</span>()
+    {
+        <span class="hljs-keyword">var</span> nextSong = _auditor.Audit(_library.Whatever());
+        PlaySong(nextSong);
+    }
+
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title">PlaySong</span>(Song song)
+    {
+        _output.Play(song);
+        song.IncrementPlayCount();
+    }
+}
+
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> SongAuditor
+{
+    <span class="hljs-keyword">public</span> Song <span class="hljs-title">Audit</span>(Song song)
+    {
+        <span class="hljs-keyword">var</span> actualSong = song;
+
+        <span class="hljs-keyword">if</span> (actualSong.Artist.Contains(<span class="hljs-string">"Ke$ha"</span>))
+            actualSong = _library.Random(Genre.SwedishDeathMetal);
+        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (actualSong.Artist.Contains(<span class="hljs-string">"Fall Out Boy"</span>))
+            actualSong = _library.Random(Genre.NinetiesBritPop);
+        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (actualSong.Artist.Contains(<span class="hljs-string">"Maroon 5"</span>))
+            actualSong = _library.Random(Genre.Reggae);
+        <span class="hljs-comment">// plus a number of other conditions that might be necessary</span>
+
+        <span class="hljs-keyword">return</span> actualSong;
+    }
+}
+</code></pre>
+
+<p>Now we have a specialized class with a single responsibility that we can easily test.  We can assume that <code>SongAuditor</code> is working correctly inside of <code>BiasedJukebox</code> because we will have tests for it that pass.</p>
+<p>To continue testing <code>BiasedJukebox</code>, we can use a mock <code>SongAuditor</code> object that we pass into our <code>BiasedJukebox</code> instance.  Instead of checking explicitly that each bit of the logic inside of <code>SongAuditor</code> happened, our tests can simply verify that the <code>Audit</code> method on the mock was called.</p>
+<p>So what did all of this gain us?</p>
+<ul>
+<li>Made it possible to directly test the logic inside of the former private method <code>AuditSong</code></li>
+<li>Gave us cleaner, more maintainable classes, each now having a single responsibility</li>
+<li>Removed the duplication of tests needed against the song auditing logic for each public method on <code>BiasedJukebox</code> that called <code>AuditSong</code></li>
+</ul>
+<p>Not bad for simply moving some code into a new class and adding a dependency to our original one.</p>
+      </article>
+      <footer>
+        <div class="return"><a href="../">jimskerritt.com</a></div>
+        <div>&copy;2014&nbsp; Jim Skerritt</div>
+      </footer>
+    </div>
+
+    <script type="text/javascript">
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-49704487-1', 'jimskerritt.com');
+      ga('send', 'pageview');
+    </script>
+  </body>
+</html>

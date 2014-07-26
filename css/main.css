@@ -3,6 +3,7 @@
 body {
   font-family: "Open Sans", "Helvetica Neue", sans-serif;
   font-size: 1em;
+  line-height: normal;
   color: #444;
   background-color: #f9f9f9;
 }
@@ -20,15 +21,18 @@ a:hover {
 }
 
 h1, h2, h3, h4, h5, h6 {
-  margin: 0 0 0.2em 0;
   font-weight: normal;
+  line-height: 1.1;
 }
 
 h1 {
+  margin: 0 0 0.2em 0;
   font-size: 2.4em;
+  font-weight: normal;
 }
 
 h2 {
+  margin: 1.3em 0 0 0;
   font-size: 2em;
 }
 
@@ -48,13 +52,17 @@ h4 {
 }
 
 pre {
-  margin: 1.2em 0;
-  word-break: break-all;
-  word-wrap: break-word;
+  margin: 1.6em 0;
+}
+
+pre code {
+  overflow-x: auto;
+  font-family: Menlo, Consolas, monospace;
+  font-size: 0.9em;
 }
 
 /* Inline code */
-p code {
+p code, li code {
   background: #eaeef3;
   color: #00193a;
   font-family: Menlo, Consolas, monospace;
@@ -78,7 +86,7 @@ header .name {
 
 header .subtitle, time {
   font-size: 1.1em;
-  color: #999;
+  color: #aaa;
 }
 
 header .links {
