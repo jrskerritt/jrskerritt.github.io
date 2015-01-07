@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>How do you unit test private methods? - Jim Skerritt</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="../favicon.ico" type="image/x-icon">
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,300,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/solarized-dark.css">
+  </head>
+  <body>
+    <div class="container">
+      <article>
+        <h1>Installing Jest on Windows in Visual Studio 2013</h1>
+        <time>January 7, 2015</time>
+        <p>I&#39;ve been doing a lot of work and experimentation with <a href="http://facebook.github.io/react/">React</a> lately, and I have to say it&#39;s pretty great.  Naturally, I wanted to write some tests for the components I&#39;ve created, so I decided to try out <a href="https://facebook.github.io/jest/">Jest</a>.</p>
+<p>Of course, being on Windows and using Visual Studio 2013, there were bound to be gotchas.  I ran into some minor trouble trying to get Jest installed through npm, but with some research I was able to get things working.  This post is mostly to document the command that was able to work for me in the hopes that it could help someone like me in the same situation.</p>
+<p>Here it is:</p>
+<pre><code class="lang-bash">$ npm install jest-cli --save-dev --msvs-version=<span class="hljs-number">2013</span> --python=python2.<span class="hljs-number">7</span>
+</code></pre>
+<p>A couple things to note:</p>
+<ol>
+<li><code>--msvs-version=2013</code> is required because one of the dependencies of Jest was trying to target Visual Studio 2010 on my machine.  Not sure why, but there it is.</li>
+<li><code>--python=python2.7</code> is required because I have Python 3.4 installed and in my PATH, but the installation requires Python 2.7.</li>
+</ol>
+<p>And that was it!  Now to start writing some React tests.</p>
+      </article>
+      <footer>
+        <div class="return"><a href="../">jimskerritt.com</a></div>
+        <div>&copy;2014&nbsp; Jim Skerritt</div>
+      </footer>
+    </div>
+
+    <script type="text/javascript">
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-49704487-1', 'jimskerritt.com');
+      ga('send', 'pageview');
+    </script>
+  </body>
+</html>
