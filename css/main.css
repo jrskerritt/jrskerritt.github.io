@@ -76,6 +76,10 @@ p code, li code {
   width: 40em;
 }
 
+header {
+  margin: 0 0 2em 0;
+}
+
 header .title {
   margin: 0 0 1.3em 0;
 }
